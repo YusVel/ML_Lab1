@@ -3,9 +3,9 @@ global stdin
 global stdout
 
 section .date
-	main_massage db "Enter N: "
+	main_massage db "Введите число: "
 	main_massage_size equ ($-main_massage)
-	error_massage db "Error! Enter N again: "
+	error_massage db "Error! Введите число повторно: "
 	error_massage_size equ ($-error_massage)
 	temp dq 0
 section .bss
@@ -64,9 +64,9 @@ f_while:
 jge f_while
 
 ; проверяем входит ли введеное значение в интервал [edge1,edge2]
-cmp ax, [edge1]
+cmp eax, [edge1]
 jl error
-cmp ax, [edge2]
+cmp eax, [edge2]
 jg error
 
 ret ; возвращаем итог ввода
