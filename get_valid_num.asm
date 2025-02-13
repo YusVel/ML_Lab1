@@ -64,9 +64,9 @@ f_while:
 jge f_while
 
 ; проверяем входит ли введеное значение в интервал [edge1,edge2]
-cmp rax, [edge1]
+cmp ax, [edge1]
 jl error
-cmp rax, [edge2]
+cmp ax, [edge2]
 jg error
 
 ret ; возвращаем итог ввода
