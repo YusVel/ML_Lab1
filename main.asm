@@ -1,6 +1,3 @@
-global	input_massage 
-global	input_massage_size 
-global	input_bytes  ; количество введенных байт  - 32 макс
 global edge1
 global edge2
 
@@ -56,13 +53,6 @@ _RESULT dw 0;16 bit
 ostatok_ot_RESULT dw 0;16 bit
 
 
-
-section .bss 
-input_massage resb 32
-input_massage_size equ ($-input_massage)
-input_bytes dq ? ; количество введенных байт
-
-
 section .text
 global _start
 _start:
@@ -105,6 +95,10 @@ _start:
 	mov [c1], al 
 
 	call calculate_s
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	jmp exite
 
@@ -136,6 +130,9 @@ ch0:
 	mov [c], ax
 
 	call calculate_us
+
+
+
 
 
 	jmp exite

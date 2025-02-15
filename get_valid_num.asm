@@ -1,22 +1,27 @@
 global get_valid_int
-global stdin
 global stdout
+extern edge1 ; интервал допустимых значений
+extern edge2
 
 section .date
 	main_massage db "Введите число: "
 	main_massage_size equ ($-main_massage)
 	error_massage db "Error! Введите число повторно: "
 	error_massage_size equ ($-error_massage)
-	sign db 0
-section .bss
-extern input_massage
-extern input_massage_size 
-extern input_bytes  ; количество введенных байт
-extern edge1 ; интервал допустимых значений
-extern edge2
+
+
+
+section .bss 
+input_massage resb 32
+input_massage_size equ ($-input_massage)
+input_bytes dq ? ; количество введенных байт
+sign_minus resb 1
+
 section .text
 
 get_valid_int:
+	mov [sign_minus] , word 0
+	
 	mov rsi, main_massage
 	mov rdx, main_massage_size
 	call stdout  ; вывод сообщения 
@@ -31,7 +36,7 @@ while:  ; цикл для проверки правильности ввода �
 	; если первый (rcx =0 )символ '-',то  значение в rax * -1  и выходим из цикла
 	cmp rcx, 0 ;  
 	je check_sign ; проверяем первый символ  = '-'
-	
+back_check:
 	movzx rbx, byte [input_massage + rcx]
 	cmp rbx, 48 ;
 	jb error; если регистр rbx меньше 47 , т.е введена не цифра
@@ -51,9 +56,9 @@ dec rcx ;  уменьшае счетчик на единицу так как в 
 xor r8, r8
 
 f_while:
-	cmp [sign],  byte 1 ; ; если поднят импровизированный флаг знака 
+	cmp [sign_minus],  byte 1 ; ; если поднят импровизированный флаг знака 
 	je make_minus
-	
+back_minus:	
 	movzx r8, byte [input_massage +rcx] ; помещаем в регист номер последнего символа в строке
 	sub r8, 48 ; В результате вычитания получаем реальное количество единиц, десятков, сотен.....
 
@@ -66,7 +71,7 @@ f_while:
 	xor r8, r8
 	cmp rcx, 0
 jge f_while
-
+almost_end:
 ; проверяем входит ли введеное значение в интервал [edge1,edge2]
 cmp eax, [edge1]
 jl error
@@ -105,16 +110,15 @@ stdin:
 	check_sign:
 	cmp [input_massage], byte 45
 	je sign_
-	mov [sign], byte 0
-	ret
+	jmp back_check
 	sign_:
-	mov [sign], byte 1
+	mov [sign_minus],  byte 1
 	jmp endwhile
 	
 	make_minus:
 	cmp rcx, 0 
 	je do_minus
-	ret
+	jmp back_minus
 	do_minus:
 	imul rax, -1
-	jmp f_while
+	jmp almost_end
