@@ -5,7 +5,7 @@ section .data
 minus db '-' 
 buffer db '*'
 temp_rax dq 0
-ten dw 10 ;  делим число в аккумуляторе на десять
+ten dd 10 ;  делим число в аккумуляторе на десять
 section .bss
 buffer_rax resb 32
 Fbuffer_rax resb 32
@@ -19,7 +19,7 @@ back_minus:
 	xor r8,r8
 	xor rcx, rcx
 while:
-	div  dword [ten]
+	idiv  dword [ten]
 	mov [temp_rax], rax
 	call p_buffer_from_rdx
 	mov rax, qword [temp_rax]

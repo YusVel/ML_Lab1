@@ -6,12 +6,19 @@ extern c1 ; 8bit
 extern _B ;16 bit
 extern _RESULT ;16 bit
 extern ostatok_ot_RESULT ;16 bit
-
-
 global calculate_s
+
+section .data
+error_massage db "Вычеслить невозможно! Переменная С не должна быть равна нулю!", 10
+error_massage_size equ $-error_massage
+
 section .text
 calculate_s:
-
+	
+	mov al, [c1]
+	cmp al,0
+	je err
+	
 	xor ax, ax
 	mov ax, 55
 	
@@ -37,5 +44,15 @@ calculate_s:
 
 	mov [_RESULT], ax
 
-	
 	ret
+	
+	err: 
+		mov rsi, error_massage
+		mov rdx, error_massage_size
+		mov rdi, 1
+		mov rax, 1
+		syscall 
+		mov rax, 60
+		mov rdi, 0
+		syscall
+		

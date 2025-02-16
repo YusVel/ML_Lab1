@@ -18,6 +18,7 @@ global ostatok_ot_RESULT ;16 bit
 extern get_valid_int
 extern stdout
 extern p_rax
+extern p_xmm0
 extern calculate_s
 extern calculate_us
 
@@ -37,6 +38,7 @@ msg6_size equ $-msg6
 msg7 db "Расчет для uint16_t ( от 0 до 65535): ",10
 msg7_size equ $-msg7
 
+
 edge1 dd 0; макс и мин границы вводимых значений включительно
 edge2 dd 0
 
@@ -53,14 +55,15 @@ _B dw 0;16 bit
 _RESULT dw 0;16 bit
 ostatok_ot_RESULT dw 0;16 bit
 
+testic dq 0.5
 
 section .text
 global _start
 _start: ;;;;;;;;;;;;;;;;;;;;MAIN;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		mov rax, 123546
-		call p_rax
-		jmp exite
-
+			movq xmm0, [testic]
+			call p_xmm0
+			
+			jmp exite
 
 	mov rsi, msg1 ; приветствие!
 	mov rdx, msg1_size
@@ -74,14 +77,14 @@ _start: ;;;;;;;;;;;;;;;;;;;;MAIN;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	call get_valid_int ; в rax вернули валидное значение
 	cmp ax, [edge1]
 	je ch0
-; расчет для int8t
+; ;;;;;;;;;;;;;;;;;;;;;;;расчет для int8t;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	mov rsi, msg6 
 	mov rdx, msg6_size
 	call stdout
 	mov [edge1], dword -128
 	mov [edge2], dword 127
 
-; воодим все 3 "переменные"
+;;;;;;;;;;;;;;;;;;;;;; воодим все 3 "переменные"
 	mov rsi, msg3  ; c
 	mov rdx, msg3_size
 	call stdout
@@ -104,18 +107,19 @@ _start: ;;;;;;;;;;;;;;;;;;;;MAIN;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	jmp exite
 
-ch0:
-	mov rsi, msg7 ; расчет для uint16t
+ch0: ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;расчет для uint16t;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	mov rsi, msg7 
 	mov rdx, msg7_size
 	call stdout
 	mov [edge1], dword 0
 	mov [edge2], dword 65535
 
- ;воодим все 3 "переменные"
+ ;;;;;;;;;;;;воодим все 3 "переменные";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	mov rsi, msg3  ; c
 	mov rdx, msg3_size
 	call stdout
