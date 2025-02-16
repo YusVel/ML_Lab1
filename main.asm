@@ -17,6 +17,7 @@ global ostatok_ot_RESULT ;16 bit
 
 extern get_valid_int
 extern stdout
+extern p_rax
 extern calculate_s
 extern calculate_us
 
@@ -55,7 +56,12 @@ ostatok_ot_RESULT dw 0;16 bit
 
 section .text
 global _start
-_start:
+_start: ;;;;;;;;;;;;;;;;;;;;MAIN;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		mov rax, 123546
+		call p_rax
+		jmp exite
+
+
 	mov rsi, msg1 ; приветствие!
 	mov rdx, msg1_size
 	call stdout
