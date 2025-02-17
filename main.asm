@@ -37,7 +37,14 @@ msg6 db "Расчет для int8_t (от -128 до 127): ",10
 msg6_size equ $-msg6
 msg7 db "Расчет для uint16_t ( от 0 до 65535): ",10
 msg7_size equ $-msg7
+msg8 db "Расчет без сопроцессора (55-b+a)/(-88/c+1) = "
+msg8_size equ $-msg8
+msg9 db 10,"Расчет на сопроцессоре (55-b+a)/(-88/c+1) = "
+msg9_size equ $-msg9
 
+char_div db '/'
+char_add db '+'
+char_equ db " = "; 3 chars
 
 edge1 dd 0; макс и мин границы вводимых значений включительно
 edge2 dd 0
@@ -50,20 +57,17 @@ c1 db 0; 8bit
 a dd 0 ; 32bit
 b dd 0 ; 32bit
 c dd 0 ; 32bit
-B dd 0 ; 32bit
+B dq 0.0 ; 64bit
 _B dw 0;16 bit
 _RESULT dw 0;16 bit
 ostatok_ot_RESULT dw 0;16 bit
 
-testic dq 0.5
+;;;;testic dq 0.5
 
 section .text
 global _start
 _start: ;;;;;;;;;;;;;;;;;;;;MAIN;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-			movq xmm0, [testic]
-			call p_xmm0
-			
-			jmp exite
+
 
 	mov rsi, msg1 ; приветствие!
 	mov rdx, msg1_size
@@ -104,12 +108,41 @@ _start: ;;;;;;;;;;;;;;;;;;;;MAIN;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	mov [c1], al 
 
 	call calculate_s
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;ВЫВОД РЕЗУЛЬТАТА;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+	mov rsi, msg8
+	mov rdx, msg8_size
+	call stdout 
+	movsx rax,  dword [A]
+	call p_rax
 
+	mov rsi, char_div
+	mov rdx, 1
+	call stdout 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	movsx rax, word [_B]
+	call p_rax
 
+	mov rsi, char_equ
+	mov rdx, 3
+	call stdout 
+
+	movsx rax, word [_RESULT]
+	call p_rax
+
+	mov rsi, char_add
+	mov rdx, 1
+	call stdout 
+
+	movsx rax,  word [ostatok_ot_RESULT]
+	call p_rax
+
+	mov rsi, char_div
+	mov rdx, 1
+	call stdout 
+
+	movsx rax, word [_B]
+	call p_rax
 	jmp exite
 
 ch0: ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;расчет для uint16t;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -141,7 +174,27 @@ ch0: ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;расчет для uint16t;;;;;;;
 
 	call calculate_us
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	mov rsi, msg9
+	mov rdx, msg9_size
+	call stdout 
+	movsx rax, dword [A]
+	call p_rax
 
+	mov rsi, char_div
+	mov rdx, 1
+	call stdout 
+
+
+	movq xmm0, [B]
+	call p_xmm0
+
+	mov rsi, char_equ
+	mov rdx, 3
+	call stdout 
+
+	movq xmm0, [RESULT]
+	call p_xmm0
 
 
 
