@@ -3,7 +3,7 @@ global stdout
 extern edge1 ; интервал допустимых значений
 extern edge2
 
-section .date
+section .data
 	main_massage db "Введите число: "
 	main_massage_size equ ($-main_massage)
 	error_massage db "Error! Введите число повторно: "
